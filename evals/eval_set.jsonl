@@ -1,0 +1,32 @@
+{"id": "extract-doc-001", "kind": "extract", "doc_id": "doc-001"}
+{"id": "extract-doc-012", "kind": "extract", "doc_id": "doc-012"}
+{"id": "extract-doc-034", "kind": "extract", "doc_id": "doc-034"}
+{"id": "extract-doc-003", "kind": "extract", "doc_id": "doc-003"}
+{"id": "extract-doc-005", "kind": "extract", "doc_id": "doc-005"}
+{"id": "extract-doc-010", "kind": "extract", "doc_id": "doc-010"}
+{"id": "extract-doc-008", "kind": "extract", "doc_id": "doc-008"}
+{"id": "extract-doc-017", "kind": "extract", "doc_id": "doc-017"}
+{"id": "extract-doc-007", "kind": "extract", "doc_id": "doc-007"}
+{"id": "extract-doc-013", "kind": "extract", "doc_id": "doc-013"}
+{"id": "extract-doc-002", "kind": "extract", "doc_id": "doc-002"}
+{"id": "extract-doc-011", "kind": "extract", "doc_id": "doc-011"}
+{"id": "rag-01", "kind": "rag", "question": "What is the member ID?", "doc_id": "doc-001", "must_contain": ["NWH633021001"], "must_cite": "doc-001"}
+{"id": "rag-02", "kind": "rag", "question": "What are the CPT codes?", "doc_id": "doc-009", "must_contain": ["27447"], "must_cite": "doc-009"}
+{"id": "rag-03", "kind": "rag", "question": "What is the urgency?", "doc_id": "doc-009", "must_contain": ["[X] STAT"], "must_cite": "doc-009"}
+{"id": "rag-04", "kind": "rag", "question": "What is the NPI?", "doc_id": "doc-008", "must_contain": ["1129327981"], "must_cite": "doc-008"}
+{"id": "rag-05", "kind": "rag", "question": "What is the member ID?", "doc_id": "doc-007", "must_contain": ["NWH497355909"], "must_cite": "doc-007"}
+{"id": "rag-06", "kind": "rag", "question": "What is the member ID?", "doc_id": "doc-003", "must_contain": ["CCP604194172"], "must_cite": "doc-003"}
+{"id": "rag-07", "kind": "rag", "question": "Who is the referring provider?", "doc_id": "doc-008", "must_contain": ["Emerson Synthwood"], "must_cite": "doc-008"}
+{"id": "rag-08", "kind": "rag", "question": "What is the member ID?", "doc_id": "doc-019", "expect_not_found": true}
+{"id": "rag-09", "kind": "rag", "question": "What are the CPT codes?", "doc_id": "doc-005", "expect_not_found": true}
+{"id": "rag-10", "kind": "rag", "question": "What is the patient's blood type?", "doc_id": "doc-001", "expect_not_found": true}
+{"id": "rag-11", "kind": "rag", "question": "Does Northwind Health Plan require prior authorization for CPT 64483?", "scope": "policy", "must_contain": ["prior authorization required"], "must_cite": "policy:northwind-health-plan"}
+{"id": "rag-12", "kind": "rag", "question": "Does Fabrikam Mutual require prior authorization for CPT 45378?", "scope": "policy", "must_contain": ["no prior authorization needed"], "must_cite": "policy:fabrikam-mutual"}
+{"id": "rag-13", "kind": "rag", "question": "Does Contoso Care require prior authorization for CPT 95806?", "scope": "policy", "must_contain": ["prior authorization required"], "must_cite": "policy:contoso-care"}
+{"id": "rag-14", "kind": "rag", "question": "Does Adatum Medical Plan require prior authorization for CPT 43239?", "scope": "policy", "must_contain": ["no prior authorization needed"], "must_cite": "policy:adatum-medical-plan"}
+{"id": "rag-15", "kind": "rag", "question": "Does Tailspin Health Alliance require prior authorization for CPT 77066?", "scope": "policy", "must_contain": ["prior authorization required"], "must_cite": "policy:tailspin-health-alliance"}
+{"id": "rag-16", "kind": "rag", "question": "What is the expedited review turnaround at Contoso Care?", "scope": "policy", "must_contain": ["48 hours"], "must_cite": "policy:contoso-care"}
+{"id": "rag-17", "kind": "rag", "question": "What is the standard review turnaround at Tailspin Health Alliance?", "scope": "policy", "must_contain": ["7 calendar days"], "must_cite": "policy:tailspin-health-alliance"}
+{"id": "rag-18", "kind": "rag", "question": "What fax number takes Fabrikam Mutual requests?", "scope": "policy", "must_contain": ["555-0163"], "must_cite": "policy:fabrikam-mutual"}
+{"id": "rag-19", "kind": "rag", "question": "Does Northwind Health Plan cover acupuncture?", "scope": "policy", "expect_not_found": true}
+{"id": "rag-20", "kind": "rag", "question": "How many epidural injection sessions per year does Northwind Health Plan allow?", "scope": "policy", "must_contain": ["four sessions per year"], "must_cite": "policy:northwind-health-plan"}

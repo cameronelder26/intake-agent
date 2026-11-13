@@ -38,11 +38,15 @@ class Chunk:
 
 
 def chunk_source(source: Source, max_chars: int = 400) -> list[Chunk]:
-    """Line-aligned chunks of at most max_chars (a single longer line becomes its own chunk)."""
+    """Line-aligned chunks of at most max_chars (a single longer line becomes its own chunk).
+
+    A chunk never ends on a "Label:" line, so a label stays with the value under it.
+    """
     chunks: list[Chunk] = []
     text = source.text
-    start = None
+    start: int | None = None
     end = 0
+    last: tuple[int, int, bool] | None = None  # (line start, previous end, is label)
     pos = 0
     for line in text.splitlines(keepends=True):
         line_start, line_end = pos, pos + len(line.rstrip("\n"))
@@ -50,10 +54,15 @@ def chunk_source(source: Source, max_chars: int = 400) -> list[Chunk]:
         if not line.strip():
             continue
         if start is not None and line_end - start > max_chars:
-            chunks.append(_chunk(source, len(chunks), start, end))
-            start = None
+            if last and last[2] and last[0] > start:
+                chunks.append(_chunk(source, len(chunks), start, last[1]))
+                start = last[0]
+            else:
+                chunks.append(_chunk(source, len(chunks), start, end))
+                start = None
         if start is None:
             start = line_start
+        last = (line_start, end, line.strip().endswith(":"))
         end = line_end
     if start is not None:
         chunks.append(_chunk(source, len(chunks), start, end))

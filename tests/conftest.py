@@ -21,7 +21,11 @@ def dataset(tmp_path_factory: pytest.TempPathFactory) -> Path:
 def settings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Settings:
     monkeypatch.delenv("INTAKE_KILL_SWITCH", raising=False)
     return Settings(
-        model="claude-haiku-5-5", effort="low", threshold=0.85, state_dir=tmp_path / "state"
+        model="claude-haiku-5-5",
+        effort="low",
+        threshold=0.85,
+        state_dir=tmp_path / "state",
+        pg_dsn="",
     )
 
 
