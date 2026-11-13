@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-008",
+    "template": "letter",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Kendall Mockridge",
+    "patient_dob": "1968-07-04",
+    "member_id": "THA337500680",
+    "payer": "Tailspin Health Alliance",
+    "referring_provider": "Emerson Synthwood",
+    "referring_npi": "1129327981",
+    "icd10_codes": [
+      "K57.92",
+      "R10.31"
+    ],
+    "cpt_codes": [
+      "74177"
+    ],
+    "requested_service": "CT abdomen and pelvis with contrast",
+    "urgency": "routine",
+    "request_date": "2026-04-13"
+  }
+}

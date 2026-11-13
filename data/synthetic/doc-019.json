@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-019",
+    "template": "letter",
+    "notes": [
+      "partial: member_id left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Avery Fixtureson",
+    "patient_dob": "1987-05-27",
+    "member_id": null,
+    "payer": "Contoso Care",
+    "referring_provider": "Emerson Testwell",
+    "referring_npi": "1686685359",
+    "icd10_codes": [
+      "R06.83"
+    ],
+    "cpt_codes": [
+      "95810"
+    ],
+    "requested_service": "Polysomnography, attended in-lab sleep study",
+    "urgency": "routine",
+    "request_date": "2026-05-13"
+  }
+}

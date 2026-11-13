@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-023",
+    "template": "form_grid",
+    "notes": [
+      "partial: payer left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Hayden Fixtureson",
+    "patient_dob": "1961-08-29",
+    "member_id": "THA519236865",
+    "payer": null,
+    "referring_provider": "Logan Placeholt",
+    "referring_npi": "1758102085",
+    "icd10_codes": [
+      "M17.12"
+    ],
+    "cpt_codes": [
+      "27447"
+    ],
+    "requested_service": "Total knee arthroplasty, left",
+    "urgency": "urgent",
+    "request_date": "2026-01-16"
+  }
+}

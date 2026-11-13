@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-028",
+    "template": "form_grid",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Casey Exampleton",
+    "patient_dob": "1995-06-27",
+    "member_id": "THA185115825",
+    "payer": "Tailspin Health Alliance",
+    "referring_provider": "Elliot Nullberg",
+    "referring_npi": "1853391948",
+    "icd10_codes": [
+      "S83.241A"
+    ],
+    "cpt_codes": [
+      "73721"
+    ],
+    "requested_service": "MRI right knee without contrast",
+    "urgency": "routine",
+    "request_date": "2026-07-25"
+  }
+}

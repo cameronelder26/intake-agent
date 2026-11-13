@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-021",
+    "template": "boxed_table",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Avery Proxley",
+    "patient_dob": "1963-08-03",
+    "member_id": "ADM274224310",
+    "payer": "Adatum Medical Plan",
+    "referring_provider": "Rowan Testwell",
+    "referring_npi": "1386575751",
+    "icd10_codes": [
+      "M17.11"
+    ],
+    "cpt_codes": [
+      "73721"
+    ],
+    "requested_service": "MRI right knee without contrast",
+    "urgency": "routine",
+    "request_date": "2026-04-13"
+  }
+}

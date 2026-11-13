@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-037",
+    "template": "form_grid",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Avery Testwell",
+    "patient_dob": "1977-06-12",
+    "member_id": "CCP676970776",
+    "payer": "Contoso Care",
+    "referring_provider": "Rowan Templeman",
+    "referring_npi": "2582314698",
+    "icd10_codes": [
+      "Z80.0"
+    ],
+    "cpt_codes": [
+      "45378"
+    ],
+    "requested_service": "Screening colonoscopy",
+    "urgency": "routine",
+    "request_date": "2026-06-01"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-014",
+    "template": "boxed_table",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Kendall Proxley",
+    "patient_dob": "1953-08-03",
+    "member_id": "NWH708896272",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Kendall Nullberg",
+    "referring_npi": "1992373476",
+    "icd10_codes": [
+      "I69.320"
+    ],
+    "cpt_codes": [
+      "92523"
+    ],
+    "requested_service": "Speech-language evaluation",
+    "urgency": "routine",
+    "request_date": "2026-07-24"
+  }
+}

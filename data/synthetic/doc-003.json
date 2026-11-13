@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-003",
+    "template": "boxed_table",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Quinn Mockridge",
+    "patient_dob": "1982-03-11",
+    "member_id": "CCP604194172",
+    "payer": "Contoso Care",
+    "referring_provider": "Hayden Placeholt",
+    "referring_npi": "2187952512",
+    "icd10_codes": [
+      "I69.320",
+      "R47.01"
+    ],
+    "cpt_codes": [
+      "92523"
+    ],
+    "requested_service": "Speech-language evaluation",
+    "urgency": "routine",
+    "request_date": "2026-07-12"
+  }
+}

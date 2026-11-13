@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-036",
+    "template": "form_grid",
+    "notes": [
+      "partial: referring_npi, member_id left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Riley Mockridge",
+    "patient_dob": "2001-02-03",
+    "member_id": null,
+    "payer": "Adatum Medical Plan",
+    "referring_provider": "Logan Samplesen",
+    "referring_npi": null,
+    "icd10_codes": [
+      "G47.33"
+    ],
+    "cpt_codes": [
+      "95806"
+    ],
+    "requested_service": "Home sleep apnea test",
+    "urgency": "routine",
+    "request_date": "2026-10-16"
+  }
+}

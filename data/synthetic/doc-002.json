@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-002",
+    "template": "scanned",
+    "notes": [
+      "partial: cpt_codes left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Quinn Templeman",
+    "patient_dob": "1970-09-08",
+    "member_id": "FBM263192149",
+    "payer": "Fabrikam Mutual",
+    "referring_provider": "Hayden Synthwood",
+    "referring_npi": "1895559791",
+    "icd10_codes": [
+      "J30.9",
+      "L50.9"
+    ],
+    "cpt_codes": [],
+    "requested_service": "Allergy skin testing",
+    "urgency": "routine",
+    "request_date": "2026-08-26"
+  }
+}

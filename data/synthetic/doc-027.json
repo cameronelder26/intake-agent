@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-027",
+    "template": "form_grid",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Emerson Fixtureson",
+    "patient_dob": "1942-04-06",
+    "member_id": "NWH934128788",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Quinn Fakeman",
+    "referring_npi": "2052202621",
+    "icd10_codes": [
+      "M17.12"
+    ],
+    "cpt_codes": [
+      "27447"
+    ],
+    "requested_service": "Total knee arthroplasty, left",
+    "urgency": "routine",
+    "request_date": "2026-08-17"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-039",
+    "template": "form_grid",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Kendall Testwell",
+    "patient_dob": "1983-12-19",
+    "member_id": "CCP905921416",
+    "payer": "Contoso Care",
+    "referring_provider": "Finley Nullberg",
+    "referring_npi": "1485298834",
+    "icd10_codes": [
+      "N63.0",
+      "R92.8"
+    ],
+    "cpt_codes": [
+      "77066"
+    ],
+    "requested_service": "Diagnostic mammogram, bilateral",
+    "urgency": "routine",
+    "request_date": "2026-07-10"
+  }
+}

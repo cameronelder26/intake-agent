@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-007",
+    "template": "fax_handwritten",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Logan Mockridge",
+    "patient_dob": "1972-03-16",
+    "member_id": "NWH497355909",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Elliot Fixtureson",
+    "referring_npi": "1222191243",
+    "icd10_codes": [
+      "M25.561",
+      "S83.241A"
+    ],
+    "cpt_codes": [
+      "73721"
+    ],
+    "requested_service": "MRI right knee without contrast",
+    "urgency": "routine",
+    "request_date": "2026-09-19"
+  }
+}

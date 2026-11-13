@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-025",
+    "template": "scanned",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Reese Demoro",
+    "patient_dob": "1984-10-05",
+    "member_id": "ADM562404777",
+    "payer": "Adatum Medical Plan",
+    "referring_provider": "Casey Dummond",
+    "referring_npi": "1690528751",
+    "icd10_codes": [
+      "I69.320",
+      "R47.01"
+    ],
+    "cpt_codes": [
+      "92523"
+    ],
+    "requested_service": "Speech-language evaluation",
+    "urgency": "urgent",
+    "request_date": "2026-07-12"
+  }
+}

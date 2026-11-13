@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-009",
+    "template": "form_grid",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Finley Testwell",
+    "patient_dob": "1997-12-16",
+    "member_id": "ADM711977348",
+    "payer": "Adatum Medical Plan",
+    "referring_provider": "Morgan Fixtureson",
+    "referring_npi": "1493925519",
+    "icd10_codes": [
+      "M17.12"
+    ],
+    "cpt_codes": [
+      "27447"
+    ],
+    "requested_service": "Total knee arthroplasty, left",
+    "urgency": "stat",
+    "request_date": "2026-09-07"
+  }
+}

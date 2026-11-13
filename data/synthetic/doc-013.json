@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-013",
+    "template": "fax_handwritten",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Dakota Dummond",
+    "patient_dob": "1964-12-24",
+    "member_id": "ADM148264109",
+    "payer": "Adatum Medical Plan",
+    "referring_provider": "Parker Synthwood",
+    "referring_npi": "2208704157",
+    "icd10_codes": [
+      "K21.9",
+      "R13.10"
+    ],
+    "cpt_codes": [
+      "43239"
+    ],
+    "requested_service": "Upper GI endoscopy with biopsy",
+    "urgency": "stat",
+    "request_date": "2026-07-16"
+  }
+}

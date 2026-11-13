@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-018",
+    "template": "fax_handwritten",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Morgan Stubbins",
+    "patient_dob": "1968-10-04",
+    "member_id": "FBM488245197",
+    "payer": "Fabrikam Mutual",
+    "referring_provider": "Quinn Nullberg",
+    "referring_npi": "1872843432",
+    "icd10_codes": [
+      "D48.5",
+      "L57.0"
+    ],
+    "cpt_codes": [
+      "99203"
+    ],
+    "requested_service": "Dermatology consult, new patient",
+    "urgency": "stat",
+    "request_date": "2026-01-22"
+  }
+}

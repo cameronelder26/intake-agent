@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-010",
+    "template": "boxed_table",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Jordan Nullberg",
+    "patient_dob": "1991-05-14",
+    "member_id": "CCP154214454",
+    "payer": "Contoso Care",
+    "referring_provider": "Harper Fakeman",
+    "referring_npi": "1441472408",
+    "icd10_codes": [
+      "J30.9",
+      "L50.9"
+    ],
+    "cpt_codes": [
+      "95004",
+      "95024"
+    ],
+    "requested_service": "Allergy skin testing",
+    "urgency": "routine",
+    "request_date": "2026-06-07"
+  }
+}

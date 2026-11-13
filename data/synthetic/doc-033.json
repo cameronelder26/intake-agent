@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-033",
+    "template": "letter",
+    "notes": [
+      "partial: referring_npi left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Logan Proxley",
+    "patient_dob": "1951-09-16",
+    "member_id": "NWH883717238",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Kendall Demoro",
+    "referring_npi": null,
+    "icd10_codes": [
+      "M17.12"
+    ],
+    "cpt_codes": [
+      "27447"
+    ],
+    "requested_service": "Total knee arthroplasty, left",
+    "urgency": "routine",
+    "request_date": "2026-06-08"
+  }
+}

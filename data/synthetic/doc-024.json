@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-024",
+    "template": "letter",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Jordan Placeholt",
+    "patient_dob": "1955-06-01",
+    "member_id": "CCP474813820",
+    "payer": "Contoso Care",
+    "referring_provider": "Riley Stubbins",
+    "referring_npi": "2623640382",
+    "icd10_codes": [
+      "Z12.11",
+      "Z80.0"
+    ],
+    "cpt_codes": [
+      "45378"
+    ],
+    "requested_service": "Screening colonoscopy",
+    "urgency": "urgent",
+    "request_date": "2026-06-28"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "doc_id": "doc-006",
+    "template": "boxed_table",
+    "notes": [
+      "partial: payer, member_id left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Quinn Nullberg",
+    "patient_dob": "1960-02-10",
+    "member_id": null,
+    "payer": null,
+    "referring_provider": "Harper Samplesen",
+    "referring_npi": "2660196140",
+    "icd10_codes": [
+      "K21.9",
+      "R13.10"
+    ],
+    "cpt_codes": [
+      "43239"
+    ],
+    "requested_service": "Upper GI endoscopy with biopsy",
+    "urgency": "routine",
+    "request_date": "2026-09-25"
+  }
+}

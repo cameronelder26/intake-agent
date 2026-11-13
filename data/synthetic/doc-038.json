@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-038",
+    "template": "letter",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Sage Synthwood",
+    "patient_dob": "1992-08-17",
+    "member_id": "NWH276724388",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Reese Dummond",
+    "referring_npi": "1356375547",
+    "icd10_codes": [
+      "M25.511",
+      "M54.50"
+    ],
+    "cpt_codes": [
+      "97161"
+    ],
+    "requested_service": "Physical therapy evaluation, low complexity",
+    "urgency": "routine",
+    "request_date": "2026-01-30"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-012",
+    "template": "form_grid",
+    "notes": [
+      "printed NPI fails checksum"
+    ]
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Parker Fakeman",
+    "patient_dob": "1973-10-10",
+    "member_id": "THA564747620",
+    "payer": "Tailspin Health Alliance",
+    "referring_provider": "Elliot Proxley",
+    "referring_npi": "2799424814",
+    "icd10_codes": [
+      "R47.01"
+    ],
+    "cpt_codes": [
+      "92523"
+    ],
+    "requested_service": "Speech-language evaluation",
+    "urgency": "urgent",
+    "request_date": "2026-05-29"
+  }
+}

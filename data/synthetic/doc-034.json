@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-034",
+    "template": "form_grid",
+    "notes": [
+      "partial: cpt_codes left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Harper Proxley",
+    "patient_dob": "1946-05-12",
+    "member_id": "NWH724365517",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Kendall Nullberg",
+    "referring_npi": "2013673605",
+    "icd10_codes": [
+      "M17.12"
+    ],
+    "cpt_codes": [],
+    "requested_service": "Total knee arthroplasty, left",
+    "urgency": "urgent",
+    "request_date": "2026-04-27"
+  }
+}

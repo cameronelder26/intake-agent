@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-015",
+    "template": "scanned",
+    "notes": [
+      "partial: patient_dob left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Sage Mockridge",
+    "patient_dob": null,
+    "member_id": "FBM787084717",
+    "payer": "Fabrikam Mutual",
+    "referring_provider": "Parker Samplesen",
+    "referring_npi": "1838545055",
+    "icd10_codes": [
+      "R47.01"
+    ],
+    "cpt_codes": [
+      "92523"
+    ],
+    "requested_service": "Speech-language evaluation",
+    "urgency": "urgent",
+    "request_date": "2026-06-09"
+  }
+}

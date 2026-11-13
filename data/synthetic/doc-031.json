@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-031",
+    "template": "fax_handwritten",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Riley Nullberg",
+    "patient_dob": "1980-12-25",
+    "member_id": "CCP222220782",
+    "payer": "Contoso Care",
+    "referring_provider": "Finley Fakeman",
+    "referring_npi": "1311998011",
+    "icd10_codes": [
+      "R01.1"
+    ],
+    "cpt_codes": [
+      "93306"
+    ],
+    "requested_service": "Transthoracic echocardiogram",
+    "urgency": "routine",
+    "request_date": "2026-06-08"
+  }
+}

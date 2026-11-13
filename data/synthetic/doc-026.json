@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-026",
+    "template": "boxed_table",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Morgan Proxley",
+    "patient_dob": "1999-09-24",
+    "member_id": "FBM185210573",
+    "payer": "Fabrikam Mutual",
+    "referring_provider": "Avery Fixtureson",
+    "referring_npi": "2436110284",
+    "icd10_codes": [
+      "I69.320",
+      "R47.01"
+    ],
+    "cpt_codes": [
+      "92523"
+    ],
+    "requested_service": "Speech-language evaluation",
+    "urgency": "routine",
+    "request_date": "2026-05-27"
+  }
+}

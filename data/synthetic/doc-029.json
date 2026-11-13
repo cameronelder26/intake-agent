@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-029",
+    "template": "fax_handwritten",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Parker Templeman",
+    "patient_dob": "1987-11-23",
+    "member_id": "FBM458573735",
+    "payer": "Fabrikam Mutual",
+    "referring_provider": "Kendall Nullberg",
+    "referring_npi": "2062429545",
+    "icd10_codes": [
+      "N63.0",
+      "R92.8"
+    ],
+    "cpt_codes": [
+      "77066"
+    ],
+    "requested_service": "Diagnostic mammogram, bilateral",
+    "urgency": "routine",
+    "request_date": "2026-07-10"
+  }
+}

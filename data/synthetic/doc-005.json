@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-005",
+    "template": "boxed_table",
+    "notes": [
+      "partial: cpt_codes, urgency left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Logan Samplesen",
+    "patient_dob": "1958-06-17",
+    "member_id": "FBM652887824",
+    "payer": "Fabrikam Mutual",
+    "referring_provider": "Kendall Dummond",
+    "referring_npi": "1141390405",
+    "icd10_codes": [
+      "J30.9"
+    ],
+    "cpt_codes": [],
+    "requested_service": "Allergy skin testing",
+    "urgency": null,
+    "request_date": "2026-08-11"
+  }
+}

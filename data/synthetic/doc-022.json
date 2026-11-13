@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-022",
+    "template": "fax_handwritten",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Quinn Mockridge",
+    "patient_dob": "1965-03-09",
+    "member_id": "NWH964599499",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Avery Proxley",
+    "referring_npi": "2133778482",
+    "icd10_codes": [
+      "I50.9"
+    ],
+    "cpt_codes": [
+      "93306"
+    ],
+    "requested_service": "Transthoracic echocardiogram",
+    "urgency": "routine",
+    "request_date": "2026-01-10"
+  }
+}

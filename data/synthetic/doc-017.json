@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-017",
+    "template": "letter",
+    "notes": [
+      "partial: referring_npi, patient_dob left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Kendall Synthwood",
+    "patient_dob": null,
+    "member_id": "FBM492946949",
+    "payer": "Fabrikam Mutual",
+    "referring_provider": "Morgan Testwell",
+    "referring_npi": null,
+    "icd10_codes": [
+      "I48.91"
+    ],
+    "cpt_codes": [
+      "99204"
+    ],
+    "requested_service": "New patient cardiology consult",
+    "urgency": "routine",
+    "request_date": "2026-05-15"
+  }
+}

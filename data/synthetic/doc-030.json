@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "doc_id": "doc-030",
+    "template": "boxed_table",
+    "notes": [
+      "partial: referring_npi, member_id left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Hayden Fixtureson",
+    "patient_dob": "1973-05-02",
+    "member_id": null,
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Harper Stubbins",
+    "referring_npi": null,
+    "icd10_codes": [
+      "K57.92"
+    ],
+    "cpt_codes": [
+      "74177"
+    ],
+    "requested_service": "CT abdomen and pelvis with contrast",
+    "urgency": "routine",
+    "request_date": "2026-05-07"
+  }
+}

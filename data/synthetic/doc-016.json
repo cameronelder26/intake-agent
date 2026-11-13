@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-016",
+    "template": "boxed_table",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Parker Dummond",
+    "patient_dob": "1977-12-12",
+    "member_id": "ADM994203091",
+    "payer": "Adatum Medical Plan",
+    "referring_provider": "Casey Exampleton",
+    "referring_npi": "2491483386",
+    "icd10_codes": [
+      "K57.92",
+      "R10.31"
+    ],
+    "cpt_codes": [
+      "74177"
+    ],
+    "requested_service": "CT abdomen and pelvis with contrast",
+    "urgency": "routine",
+    "request_date": "2026-02-06"
+  }
+}

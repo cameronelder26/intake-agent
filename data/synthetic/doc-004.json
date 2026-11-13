@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-004",
+    "template": "boxed_table",
+    "notes": [
+      "partial: cpt_codes left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Parker Templeman",
+    "patient_dob": "1942-07-28",
+    "member_id": "NWH441276794",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Harper Exampleton",
+    "referring_npi": "2759573829",
+    "icd10_codes": [
+      "Z12.11",
+      "Z80.0"
+    ],
+    "cpt_codes": [],
+    "requested_service": "Screening colonoscopy",
+    "urgency": "routine",
+    "request_date": "2026-07-08"
+  }
+}

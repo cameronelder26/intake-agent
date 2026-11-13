@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-020",
+    "template": "letter",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Hayden Samplesen",
+    "patient_dob": "1957-07-28",
+    "member_id": "THA215010935",
+    "payer": "Tailspin Health Alliance",
+    "referring_provider": "Emerson Stubbins",
+    "referring_npi": "1858522653",
+    "icd10_codes": [
+      "J30.9"
+    ],
+    "cpt_codes": [
+      "95004",
+      "95024"
+    ],
+    "requested_service": "Allergy skin testing",
+    "urgency": "routine",
+    "request_date": "2026-10-04"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-011",
+    "template": "scanned",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Avery Samplesen",
+    "patient_dob": "1969-07-17",
+    "member_id": "CCP904966844",
+    "payer": "Contoso Care",
+    "referring_provider": "Morgan Exampleton",
+    "referring_npi": "2033505662",
+    "icd10_codes": [
+      "R00.2"
+    ],
+    "cpt_codes": [
+      "99204"
+    ],
+    "requested_service": "New patient cardiology consult",
+    "urgency": "routine",
+    "request_date": "2026-10-05"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "doc_id": "doc-001",
+    "template": "form_grid",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Jordan Stubbins",
+    "patient_dob": "1958-06-23",
+    "member_id": "NWH633021001",
+    "payer": "Northwind Health Plan",
+    "referring_provider": "Logan Synthwood",
+    "referring_npi": "2975432313",
+    "icd10_codes": [
+      "M51.16"
+    ],
+    "cpt_codes": [
+      "64483",
+      "64484"
+    ],
+    "requested_service": "Lumbar transforaminal epidural steroid injection",
+    "urgency": "routine",
+    "request_date": "2026-06-07"
+  }
+}

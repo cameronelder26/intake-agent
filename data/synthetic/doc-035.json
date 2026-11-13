@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-035",
+    "template": "fax_handwritten",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Emerson Samplesen",
+    "patient_dob": "1959-12-24",
+    "member_id": "ADM993534987",
+    "payer": "Adatum Medical Plan",
+    "referring_provider": "Finley Demoro",
+    "referring_npi": "2324566449",
+    "icd10_codes": [
+      "I35.0"
+    ],
+    "cpt_codes": [
+      "93306"
+    ],
+    "requested_service": "Transthoracic echocardiogram",
+    "urgency": "routine",
+    "request_date": "2026-09-07"
+  }
+}

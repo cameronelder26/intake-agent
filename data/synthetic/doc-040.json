@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-040",
+    "template": "letter",
+    "notes": []
+  },
+  "fields": {
+    "document_type": "prior_auth",
+    "patient_name": "Jordan Placeholt",
+    "patient_dob": "1948-09-27",
+    "member_id": "FBM559711562",
+    "payer": "Fabrikam Mutual",
+    "referring_provider": "Parker Synthwood",
+    "referring_npi": "2097297321",
+    "icd10_codes": [
+      "I50.9"
+    ],
+    "cpt_codes": [
+      "93306"
+    ],
+    "requested_service": "Transthoracic echocardiogram",
+    "urgency": "routine",
+    "request_date": "2026-09-14"
+  }
+}

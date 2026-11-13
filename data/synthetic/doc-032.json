@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "doc_id": "doc-032",
+    "template": "scanned",
+    "notes": [
+      "partial: payer, cpt_codes left blank"
+    ]
+  },
+  "fields": {
+    "document_type": "referral",
+    "patient_name": "Hayden Dummond",
+    "patient_dob": "1960-07-26",
+    "member_id": "ADM466569347",
+    "payer": null,
+    "referring_provider": "Casey Testwell",
+    "referring_npi": "2453466494",
+    "icd10_codes": [
+      "M17.12"
+    ],
+    "cpt_codes": [],
+    "requested_service": "Total knee arthroplasty, left",
+    "urgency": "routine",
+    "request_date": "2026-10-11"
+  }
+}
