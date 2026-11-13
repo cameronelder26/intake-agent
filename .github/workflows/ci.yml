@@ -1,0 +1,59 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: intake
+          POSTGRES_PASSWORD: intake-ci-only
+          POSTGRES_DB: intake
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U intake -d intake"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      # Throwaway CI database. No API key is set anywhere: tests and the eval
+      # smoke run use the mock extractor and answerer.
+      INTAKE_PG_DSN: postgresql://intake:intake-ci-only@localhost:5432/intake
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -e ".[dev,pg]"
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Tests (pgvector test runs against the service container)
+        run: pytest -q
+      - name: Eval harness, mock mode, pgvector store
+        run: |
+          python -m intake_agent.harness --mock --out "$RUNNER_TEMP/RESULTS.md" > /dev/null
+          cat "$RUNNER_TEMP/RESULTS.md" >> "$GITHUB_STEP_SUMMARY"
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t intake-agent .
+      - name: Smoke test
+        run: |
+          docker run --rm intake-agent rag ask --mock --policy-only \
+            "Does Contoso Care require prior authorization for CPT 95806?"

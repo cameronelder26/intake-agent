@@ -1,0 +1,40 @@
+# Local stack: the app plus PostgreSQL with pgvector.
+#
+#   docker compose up -d db
+#   docker compose run --rm app rag index
+#   docker compose run --rm app rag ask --mock --policy-only "Does Contoso Care require prior authorization for CPT 95806?"
+#
+# The database password is a local-only default. Set POSTGRES_PASSWORD to change it.
+# Nothing here needs an API key; pass ANTHROPIC_API_KEY through only for model runs.
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: intake
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-intake-local-only}
+      POSTGRES_DB: intake
+    ports:
+      - "127.0.0.1:54329:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U intake -d intake"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      INTAKE_PG_DSN: postgresql://intake:${POSTGRES_PASSWORD:-intake-local-only}@db:5432/intake
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    volumes:
+      - intake-state:/app/.intake
+    command: ["rag", "index"]
+
+volumes:
+  pgdata:
+  intake-state:
