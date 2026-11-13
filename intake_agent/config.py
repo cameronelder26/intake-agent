@@ -28,6 +28,7 @@ class Settings:
         default_factory=lambda: float(os.environ.get("INTAKE_THRESHOLD", "0.85"))
     )
     state_dir: Path = field(default_factory=lambda: _env_path("INTAKE_STATE_DIR", ".intake"))
+    pg_dsn: str = field(default_factory=lambda: os.environ.get("INTAKE_PG_DSN", ""))
 
     @property
     def db_path(self) -> Path:
@@ -45,3 +46,8 @@ class Settings:
 def cost_usd(model: str, input_tokens: int, output_tokens: int) -> float:
     price_in, price_out = PRICES_PER_MTOK.get(model, (0.0, 0.0))
     return (input_tokens * price_in + output_tokens * price_out) / 1_000_000
+
+
+def estimate_tokens(text: str) -> int:
+    """Rough token count (about 4 characters per token) for mock runs that never call the API."""
+    return max(1, round(len(text) / 4)) if text else 0

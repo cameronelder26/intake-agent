@@ -24,9 +24,11 @@ app = typer.Typer(no_args_is_help=True, help="intake-agent: referral and prior-a
 queue_app = typer.Typer(no_args_is_help=True, help="Review queue.")
 kill_app = typer.Typer(no_args_is_help=True, help="Kill switch for new extractions.")
 audit_app = typer.Typer(no_args_is_help=True, help="Audit log.")
+rag_app = typer.Typer(no_args_is_help=True, help="Ask the documents and payer policies.")
 app.add_typer(queue_app, name="queue")
 app.add_typer(kill_app, name="kill")
 app.add_typer(audit_app, name="audit")
+app.add_typer(rag_app, name="rag")
 
 Reviewer = Annotated[
     str,
@@ -254,6 +256,77 @@ def audit_tail(n: Annotated[int, typer.Option("-n", "--lines")] = 10) -> None:
                 }
             )
         )
+
+
+def _rag_index(settings: Settings, data: Path, policies: Path, rebuild: bool):
+    from .rag import HashingEmbedder, RagIndex, load_corpus, make_store
+
+    emb = HashingEmbedder()
+    idx = RagIndex(emb, make_store(emb.dim, settings.pg_dsn))
+    if rebuild or idx.store.count() == 0:
+        idx.store.clear()
+        sources, skipped = load_corpus(data, policies)
+        n = idx.build(sources)
+        backend = "pgvector" if settings.pg_dsn else "memory"
+        typer.echo(
+            f"indexed {n} chunks from {len(sources)} sources into {backend}; "
+            f"skipped {len(skipped)} scans with no text layer",
+            err=True,
+        )
+    return idx
+
+
+@rag_app.command("index")
+def rag_index(data: Path = Path("data/synthetic"), policies: Path = Path("data/policies")) -> None:
+    """(Re)build the index. Persists only when INTAKE_PG_DSN points at Postgres + pgvector."""
+    settings = Settings()
+    _rag_index(settings, data, policies, rebuild=True)
+    if not settings.pg_dsn:
+        typer.echo("INTAKE_PG_DSN is not set, so the in-memory index was not kept.", err=True)
+
+
+@rag_app.command("ask")
+def rag_ask(
+    question: str,
+    reviewer: Reviewer,
+    doc: Annotated[str | None, typer.Option(help="Only search this document id.")] = None,
+    policies_only: Annotated[
+        bool, typer.Option("--policy-only", help="Only search payer policies.")
+    ] = False,
+    k: int = 5,
+    mock: Annotated[bool, typer.Option(help="Extractive answerer, no API calls.")] = False,
+    as_json: Annotated[bool, typer.Option("--json")] = False,
+    data: Path = Path("data/synthetic"),
+    policies: Path = Path("data/policies"),
+) -> None:
+    """Answer QUESTION from the indexed text, citing doc id and character span."""
+    from .rag import make_answerer
+
+    settings = Settings()
+    if not mock and not os.environ.get("ANTHROPIC_API_KEY"):
+        _fail("ANTHROPIC_API_KEY is not set. Use --mock to run without the API.")
+    idx = _rag_index(settings, data, policies, rebuild=False)
+    hits = idx.retrieve(question, k=k, doc_id=doc, prefix="policy:" if policies_only else None)
+    ans = make_answerer(mock, settings).answer(question, hits)
+    audit, _ = open_state(settings)
+    audit.append(
+        actor=reviewer,
+        action="rag_answer",
+        doc_id=doc,
+        model=ans.model,
+        detail={
+            "question": question,
+            "grounded": ans.grounded,
+            "citations": [c.model_dump() for c in ans.citations],
+            "dropped_citations": ans.dropped_citations,
+        },
+    )
+    if as_json:
+        typer.echo(ans.model_dump_json(indent=2))
+        return
+    typer.echo(ans.text)
+    for c in ans.citations:
+        typer.echo(f"  [{c.doc_id} {c.start}-{c.end}] {c.quote!r}")
 
 
 if __name__ == "__main__":

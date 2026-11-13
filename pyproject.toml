@@ -19,6 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]
+pg = ["psycopg[binary]>=3.2"]
 
 [project.scripts]
 intake = "intake_agent.cli:app"
