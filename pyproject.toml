@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intake-agent"
+version = "0.1.0"
+description = "Healthcare referral and prior-auth intake pipeline with confidence gating, human review, and an audit log. Synthetic data only."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "anthropic>=2.8",
+    "pydantic>=2.7",
+    "pypdf>=5.0",
+    "reportlab>=4.0",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+intake = "intake_agent.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["intake_agent*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
