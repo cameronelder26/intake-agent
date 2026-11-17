@@ -29,7 +29,7 @@ from .config import Settings
 from .extractor import ExtractionError, make_extractor
 from .graph import KillSwitchEngaged, run_document
 from .pipeline import open_state
-from .rag import HashingEmbedder, RagIndex, load_corpus, make_answerer, make_store
+from .rag import RagIndex, load_corpus, make_answerer, make_embedder, make_store, store_table
 from .schema import FIELDS
 
 _TRUTHY = {"1", "true", "yes", "on"}
@@ -86,8 +86,8 @@ def create_app(
     def get_index(settings: Settings) -> RagIndex:
         key = settings.pg_dsn or "memory"
         if key not in index_cache:
-            emb = HashingEmbedder()
-            idx = RagIndex(emb, make_store(emb.dim, settings.pg_dsn))
+            emb = make_embedder()
+            idx = RagIndex(emb, make_store(emb.dim, settings.pg_dsn, store_table(emb)))
             if idx.store.count() == 0:
                 data = Path(os.environ.get("INTAKE_DATA_DIR", "data/synthetic"))
                 policies = Path(os.environ.get("INTAKE_POLICY_DIR", "data/policies"))

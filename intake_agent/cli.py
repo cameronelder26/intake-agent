@@ -284,10 +284,10 @@ def audit_tail(n: Annotated[int, typer.Option("-n", "--lines")] = 10) -> None:
 
 
 def _rag_index(settings: Settings, data: Path, policies: Path, rebuild: bool):
-    from .rag import HashingEmbedder, RagIndex, load_corpus, make_store
+    from .rag import RagIndex, load_corpus, make_embedder, make_store, store_table
 
-    emb = HashingEmbedder()
-    idx = RagIndex(emb, make_store(emb.dim, settings.pg_dsn))
+    emb = make_embedder()
+    idx = RagIndex(emb, make_store(emb.dim, settings.pg_dsn, store_table(emb)))
     if rebuild or idx.store.count() == 0:
         idx.store.clear()
         sources, skipped = load_corpus(data, policies)

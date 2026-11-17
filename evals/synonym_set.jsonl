@@ -1,0 +1,5 @@
+{"id": "syn-01", "kind": "rag", "question": "What is the member ID for Quinn Mockridge?", "must_contain": ["CCP604194172"], "must_cite": "doc-003", "note": "form says SUBSCRIBER ID"}
+{"id": "syn-02", "kind": "rag", "question": "What is the subscriber ID for Jordan Stubbins?", "must_contain": ["NWH633021001"], "must_cite": "doc-001", "note": "form says Member ID"}
+{"id": "syn-03", "kind": "rag", "question": "Which doctor referred Quinn Mockridge?", "must_contain": ["Hayden Placeholt"], "must_cite": "doc-003", "note": "form says ORDERING PHYSICIAN"}
+{"id": "syn-04", "kind": "rag", "question": "How quickly does Contoso Care decide a rush request?", "scope": "policy", "must_contain": ["48 hours"], "must_cite": "policy:contoso-care", "note": "policy says Expedited review"}
+{"id": "syn-05", "kind": "rag", "question": "Does Contoso Care need pre-approval for a home sleep test?", "scope": "policy", "must_contain": ["home sleep apnea test"], "must_cite": "policy:contoso-care", "note": "policy says prior authorization, home sleep apnea test"}

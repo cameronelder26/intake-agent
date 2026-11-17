@@ -147,6 +147,6 @@ class PgVectorStore:
             cur.execute(f"TRUNCATE {self.table}")
 
 
-def make_store(dim: int, dsn: str | None = None) -> VectorStore:
+def make_store(dim: int, dsn: str | None = None, table: str = "rag_chunks") -> VectorStore:
     dsn = dsn if dsn is not None else os.environ.get("INTAKE_PG_DSN", "")
-    return PgVectorStore(dsn, dim) if dsn else InMemoryStore()
+    return PgVectorStore(dsn, dim, table=table) if dsn else InMemoryStore()

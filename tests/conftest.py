@@ -32,3 +32,9 @@ def settings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Settings:
 @pytest.fixture
 def state(settings: Settings):
     return open_state(settings)
+
+
+@pytest.fixture(autouse=True)
+def _hashing_embedder(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tests never download a model; the real embedder has its own opt-in test."""
+    monkeypatch.setenv("INTAKE_EMBEDDER", "hashing")

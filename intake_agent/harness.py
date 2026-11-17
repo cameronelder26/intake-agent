@@ -39,12 +39,22 @@ from .config import PRICES_PER_MTOK, Settings, estimate_tokens
 from .eval import values_match
 from .extractor import SYSTEM_PROMPT, ExtractionError, Extractor, make_extractor
 from .pdftext import collapse_fragments, extract_raw_text, has_usable_text
-from .rag import NOT_FOUND, HashingEmbedder, RagIndex, load_corpus, make_answerer, make_store
+from .rag import (
+    NOT_FOUND,
+    RagIndex,
+    load_corpus,
+    make_answerer,
+    make_embedder,
+    make_store,
+    store_table,
+)
 from .rag.answer import Answerer
 from .schema import FIELDS, ModelExtraction
 
 # Rough input cost of one PDF page sent as a document block (text plus page image).
 TOKENS_PER_SCANNED_PAGE = 1600
+EMBED_START = "<!-- embeddings:start -->"
+EMBED_END = "<!-- embeddings:end -->"
 SCHEMA_JSON = json.dumps(ModelExtraction.model_json_schema())
 
 
@@ -72,6 +82,7 @@ class RunInfo:
     store: str
     index_ms: float
     index_chunks: int
+    embedder: str = ""
 
 
 def load_tasks(path: Path) -> list[dict]:
@@ -188,8 +199,8 @@ def run_harness(
 ) -> tuple[list[TaskResult], RunInfo]:
     extractor = make_extractor(mock, settings)
     answerer = make_answerer(mock, settings)
-    emb = HashingEmbedder()
-    store = make_store(emb.dim, settings.pg_dsn)
+    emb = make_embedder()
+    store = make_store(emb.dim, settings.pg_dsn, store_table(emb))
     store.clear()
     index = RagIndex(emb, store)
     t0 = time.perf_counter()
@@ -213,6 +224,7 @@ def run_harness(
         store="pgvector" if settings.pg_dsn else "in-memory",
         index_ms=index_ms,
         index_chunks=n_chunks,
+        embedder=emb.name,
     )
     return results, info
 
@@ -255,6 +267,7 @@ def render(results: list[TaskResult], info: RunInfo, run_date: date) -> str:
         f"- Priced as `{info.model}` at ${info.price_in:.2f} in / ${info.price_out:.2f} out "
         "per million tokens",
         f"- Review threshold {info.threshold}; vector store {info.store}; "
+        f"embedder `{info.embedder}`; "
         f"index build {info.index_ms:.0f} ms for {info.index_chunks} chunks",
         "",
     ]
@@ -341,6 +354,12 @@ def main(argv: list[str] | None = None) -> int:
         load_tasks(args.tasks), args.mock, settings, prices, args.data, args.policies
     )
     md = render(results, info, date.today())
+    # keep the embedder comparison that `python -m intake_agent.embed_eval` wrote into this file
+    if args.out.exists():
+        old = args.out.read_text()
+        a, b = old.find(EMBED_START), old.find(EMBED_END)
+        if a != -1 and b != -1:
+            md = md.rstrip("\n") + "\n\n" + old[a : b + len(EMBED_END)] + "\n"
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(md)
     print(md)

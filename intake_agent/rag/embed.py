@@ -5,6 +5,12 @@ network and no key, and it gives the same vector on every machine, which is what
 tests and CI need. It is lexical, not semantic: "knee replacement" will not match
 "arthroplasty". A real embedding model plugs in through the Embedder protocol; the
 pgvector column is sized from Embedder.dim.
+
+FastEmbedder runs BAAI/bge-small-en-v1.5 locally through ONNX (no API key, no network
+after the first model download). make_embedder() picks it when it is installed and the
+model loads, and falls back to HashingEmbedder otherwise. INTAKE_EMBEDDER=hashing forces
+the fallback (CI does this so it needs no download); INTAKE_EMBEDDER=fastembed makes a
+missing model an error instead of a silent fallback.
 """
 
 from __future__ import annotations
@@ -12,6 +18,7 @@ from __future__ import annotations
 import hashlib
 import itertools
 import math
+import os
 import re
 from typing import Protocol
 
@@ -60,3 +67,46 @@ class HashingEmbedder:
             vec[h % self.dim] += weight if (h >> 40) & 1 else -weight
         norm = math.sqrt(sum(v * v for v in vec))
         return [v / norm for v in vec] if norm else vec
+
+
+class FastEmbedder:
+    """Local BAAI/bge-small-en-v1.5 (384 dims, unit-length vectors) via fastembed.
+
+    Install with: pip install -e ".[embeddings]". The model (~130 MB) is downloaded once
+    and cached.
+    """
+
+    MODEL = "BAAI/bge-small-en-v1.5"
+
+    def __init__(self, model: str = MODEL):
+        from fastembed import TextEmbedding  # optional dependency
+
+        self._model = TextEmbedding(model)
+        self.name = f"fastembed-{model.split('/')[-1]}"
+        self.dim = len(next(iter(self._model.embed(["dimension probe"]))))
+
+    def embed(self, text: str) -> list[float]:
+        vec = next(iter(self._model.embed([text])))
+        return [float(v) for v in vec]
+
+
+def make_embedder(kind: str | None = None) -> Embedder:
+    """INTAKE_EMBEDDER: auto (default), hashing, or fastembed."""
+    kind = (kind or os.environ.get("INTAKE_EMBEDDER") or "auto").lower()
+    if kind == "hashing":
+        return HashingEmbedder()
+    if kind == "fastembed":
+        return FastEmbedder()
+    if kind != "auto":
+        raise ValueError(f"INTAKE_EMBEDDER must be auto, hashing or fastembed, got {kind!r}")
+    try:
+        return FastEmbedder()
+    except Exception:  # not installed, or the model could not be loaded offline
+        return HashingEmbedder()
+
+
+def store_table(emb: Embedder) -> str:
+    """pgvector table name per embedder, so vectors from two models never share a table."""
+    if isinstance(emb, HashingEmbedder):
+        return "rag_chunks"
+    return "rag_chunks_" + re.sub(r"[^a-z0-9]+", "_", emb.name.lower()).strip("_")

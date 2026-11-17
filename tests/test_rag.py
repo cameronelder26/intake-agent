@@ -193,3 +193,35 @@ def test_pgvector_store_matches_in_memory(corpus):
     hit = pg.retrieve("member id", k=1, doc_id=first_form(corpus))[0]
     assert corpus[0][hit.chunk.doc_id].text[hit.chunk.start : hit.chunk.end] == hit.chunk.text
     store.clear()
+
+
+def test_make_embedder_honours_env(monkeypatch):
+    from intake_agent.rag import make_embedder
+
+    assert isinstance(make_embedder(), HashingEmbedder)  # conftest forces hashing
+    monkeypatch.setenv("INTAKE_EMBEDDER", "bogus")
+    with pytest.raises(ValueError):
+        make_embedder()
+
+
+def test_auto_falls_back_to_hashing_when_model_unavailable(monkeypatch):
+    from intake_agent.rag import embed
+
+    def boom(*a, **k):
+        raise ImportError("no fastembed")
+
+    monkeypatch.setenv("INTAKE_EMBEDDER", "auto")
+    monkeypatch.setattr(embed, "FastEmbedder", boom)
+    assert isinstance(embed.make_embedder(), HashingEmbedder)
+
+
+def test_real_embedder_bridges_a_synonym(corpus):
+    pytest.importorskip("fastembed")
+    from intake_agent.rag import FastEmbedder
+
+    idx = RagIndex(FastEmbedder(), InMemoryStore())
+    idx.build(list(corpus[0].values()))
+    hits = idx.retrieve(
+        "How quickly does Contoso Care decide a rush request?", k=5, prefix="policy:"
+    )
+    assert any(h.chunk.doc_id == "policy:contoso-care" and "48 hours" in h.chunk.text for h in hits)

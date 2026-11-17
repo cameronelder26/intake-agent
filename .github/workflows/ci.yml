@@ -28,6 +28,8 @@ jobs:
       # Throwaway CI database. No API key is set anywhere: tests and the eval
       # smoke run use the mock extractor and answerer.
       INTAKE_PG_DSN: postgresql://intake:intake-ci-only@localhost:5432/intake
+      # Hashing embedder in CI: no model download. The real embedder is opt-in (.[embeddings]).
+      INTAKE_EMBEDDER: hashing
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

@@ -344,6 +344,52 @@ credits a correctly empty field. Code lists compare as sets; text compares case-
 after normalization. Cost per document uses the token counts the API returns and the rates in
 `config.py`.
 
+## Embeddings
+
+Retrieval embeds with a real local model when one is available: `BAAI/bge-small-en-v1.5`
+(384 dims) through [fastembed](https://github.com/qdrant/fastembed) and ONNX. No API key and
+no network after the first ~130 MB model download.
+
+```bash
+pip install -e ".[embeddings]"        # optional extra; the model downloads on first use
+python -m intake_agent.embed_eval     # reruns the comparison below, writes evals/RESULTS.md
+```
+
+`make_embedder()` in `intake_agent/rag/embed.py` picks the model when it loads and falls
+back to the deterministic `HashingEmbedder` when it does not. `INTAKE_EMBEDDER` overrides:
+`hashing` forces the fallback (CI sets it, so CI downloads nothing), `fastembed` makes a
+missing model an error, `auto` is the default. pgvector tables are named per embedder, so
+vectors from two models never mix; changing embedder means reindexing (`intake rag` with
+`--rebuild`, or a fresh in-memory index).
+
+| Embedder | Set | Tasks | hit@1 | hit@3 | hit@5 | Cited-answer accuracy |
+|---|---|---|---|---|---|---|
+| `hashing-v1-384` | main eval_set (rag) | 20 | 7/16 | 10/16 | 10/16 | 17/20 |
+| `hashing-v1-384` | synonym cases | 5 | 1/5 | 2/5 | 2/5 | 1/5 |
+| `fastembed-bge-small-en-v1.5` | main eval_set (rag) | 20 | 6/16 | 11/16 | 11/16 | 17/20 |
+| `fastembed-bge-small-en-v1.5` | synonym cases | 5 | 1/5 | 4/5 | 5/5 | 1/5 |
+
+### Vocabulary-miss cases (rank of the right chunk, `-` = not in top 10)
+
+| Case | Question | Form wording | `hashing-v1-384` | `fastembed-bge-small-en-v1.5` |
+|---|---|---|---|---|
+| syn-01 | What is the member ID for Quinn Mockridge? | form says SUBSCRIBER ID | - | 2 |
+| syn-02 | What is the subscriber ID for Jordan Stubbins? | form says Member ID | 7 | 2 |
+| syn-03 | Which doctor referred Quinn Mockridge? | form says ORDERING PHYSICIAN | - | 2 |
+| syn-04 | How quickly does Contoso Care decide a rush request? | policy says Expedited review | 2 | 4 |
+| syn-05 | Does Contoso Care need pre-approval for a home sleep test? | policy says prior authorization, home sleep apnea test | 1 | 1 |
+
+How to read it: hit@k is whether a top-k chunk holds the expected text from the expected
+document, searching the whole index. The synonym cases (`evals/synonym_set.jsonl`) use words
+the document does not (asking for "member ID" when the form says "SUBSCRIBER ID", "rush
+request" for "expedited review"); that is where the real model pays off, 2/5 to 5/5 at
+hit@5. The 16 main-set questions are written for a `doc_id` filter and name no patient, so
+unscoped hit@k on them is capped by ambiguity and the two embedders are about even there.
+Cited-answer accuracy does not move because the mock answerer is lexical: better retrieval
+puts the right chunk in front of it, but it still cannot match "member" to "subscriber".
+Closing that gap needs the Claude answerer. Per-case ranks and the command are in
+[`evals/RESULTS.md`](evals/RESULTS.md).
+
 ## Eval harness
 
 `python -m intake_agent.harness --mock` runs a fixed set of 32 synthetic tasks
@@ -472,7 +518,8 @@ wrote the documents. It's a regression check, not a benchmark.
 - Reviewer identity is whatever name is passed on the command line; there is no auth.
 - Retrieval only covers documents with a text layer. Scans are skipped at index time, not OCR'd.
 - The extractive mock answerer is a baseline. It misses synonyms and picks the wrong line
-  when two labels tie (see the eval harness results).
+  when two labels tie (see the eval harness results). The real embedder fixes retrieval for
+  synonyms, not this answerer (see Embeddings).
 - RAG answers are not gated or reviewed the way extracted fields are. They're a lookup aid
   for the reviewer, and they're logged, but nothing downstream consumes them.
 - Tested on Python 3.14 on macOS and Python 3.12 on Linux (the CI steps were run in a
