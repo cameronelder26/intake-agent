@@ -77,6 +77,31 @@ def run(
         typer.secho(f"HALTED by kill switch ({report.halted_reason})", fg=typer.colors.YELLOW)
 
 
+@app.command("graph")
+def graph_cmd(
+    pdf: Path,
+    mock: Annotated[bool, typer.Option(help="Use the rule-based mock, no API calls.")] = False,
+    doc_id: Annotated[str | None, typer.Option(help="Defaults to the file name.")] = None,
+) -> None:
+    """Run one document through the LangGraph pipeline and print the route it took."""
+    from .graph import KillSwitchEngaged, run_document
+
+    settings = Settings()
+    if not mock and not os.environ.get("ANTHROPIC_API_KEY"):
+        _fail("ANTHROPIC_API_KEY is not set. Use --mock to run without the API.")
+    _, queue = open_state(settings)
+    if queue.has(doc_id or pdf.stem):
+        _fail(f"{doc_id or pdf.stem} is already in the queue")
+    try:
+        state = run_document(pdf, make_extractor(mock, settings), queue, settings, doc_id)
+    except KillSwitchEngaged as exc:
+        _fail(f"HALTED by kill switch ({exc})")
+    typer.echo(f"{state['doc_id']}: route={state['route']} status={state['status']}")
+    for name in state["flagged"]:
+        f = state["scored"][name]
+        typer.echo(f"  review {name:<19} {f.confidence:.2f}  {json.dumps(f.value)}")
+
+
 @queue_app.command("list")
 def queue_list() -> None:
     """Documents waiting for a human."""
