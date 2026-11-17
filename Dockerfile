@@ -19,5 +19,10 @@ RUN useradd --create-home intake && mkdir -p /app/.intake && chown -R intake /ap
 USER intake
 ENV INTAKE_STATE_DIR=/app/.intake
 
+EXPOSE 8000
+
+# CLI by default. The API runs with:
+#   docker run --entrypoint uvicorn -p 127.0.0.1:8000:8000 intake-agent \
+#       intake_agent.api:app --host 0.0.0.0 --port 8000
 ENTRYPOINT ["intake"]
 CMD ["--help"]

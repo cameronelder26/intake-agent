@@ -57,3 +57,11 @@ jobs:
         run: |
           docker run --rm intake-agent rag ask --mock --policy-only \
             "Does Contoso Care require prior authorization for CPT 95806?"
+      - name: API smoke test
+        run: |
+          docker run -d --name api -p 127.0.0.1:8000:8000 --entrypoint uvicorn intake-agent \
+            intake_agent.api:app --host 0.0.0.0 --port 8000
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/healthz && break; sleep 1; done
+          curl -fsS http://127.0.0.1:8000/healthz
+          curl -fsS -X POST http://127.0.0.1:8000/ask -H 'content-type: application/json' \
+            -d '{"question": "Does Contoso Care require prior authorization for CPT 95806?", "policy_only": true}'

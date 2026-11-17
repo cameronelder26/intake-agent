@@ -35,6 +35,24 @@ services:
       - intake-state:/app/.intake
     command: ["rag", "index"]
 
+  # HTTP API on localhost only. Mock mode unless ANTHROPIC_API_KEY is set (INTAKE_MOCK=1 forces it).
+  #   docker compose up -d api && curl http://127.0.0.1:8000/healthz
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      INTAKE_PG_DSN: postgresql://intake:${POSTGRES_PASSWORD:-intake-local-only}@db:5432/intake
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      INTAKE_MOCK: ${INTAKE_MOCK:-}
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - intake-state:/app/.intake
+    entrypoint: ["uvicorn"]
+    command: ["intake_agent.api:app", "--host", "0.0.0.0", "--port", "8000"]
+
 volumes:
   pgdata:
   intake-state:
