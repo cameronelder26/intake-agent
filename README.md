@@ -244,6 +244,83 @@ intake graph --mock data/synthetic/doc-001.pdf
 # doc-001: route=auto_accept status=auto_approved
 ```
 
+## Human-in-the-loop (checkpointing + interrupt)
+
+The graph is compiled with a checkpointer, so a run can stop in the middle and carry on later, even from another process. `make_checkpointer` uses `SqliteSaver` (file `.intake/checkpoints.sqlite`) if `langgraph-checkpoint-sqlite` is installed (`pip install -e ".[sqlite]"`) and `MemorySaver` if not. The thread id is the document id.
+
+A document with any field below the threshold is stored in the review queue and then the `human_review` node calls `interrupt()` with the low-confidence fields, their values, issues, source citations and any note from the reviewer agent. The run stops there. A person resumes it with `Command(resume={...})`, and the node applies those decisions to the queue and the graph finishes with its audit record.
+
+```bash
+intake graph --mock data/synthetic/doc-012.pdf
+# doc-012: route=human_review status=pending_review
+#   review referring_npi       0.30  "2799424814"
+# paused for a human. Resume: intake graph-review doc-012 --reviewer you
+
+intake graph-review                # list paused threads
+# doc-012: 1 field(s) to decide
+#   referring_npi       0.30  "2799424814"
+intake graph-review doc-012 --reviewer dana --correct referring_npi=1234567893
+# doc-012: status=approved
+```
+
+Resume payloads: `{"reviewer": "dana", "approve_all": true}`, or `{"reviewer": "dana", "decisions": {"payer": "approve", "referring_npi": {"correct": "1234567893"}}}`, or `{"reviewer": "dana", "reject": "wrong patient"}`. A field you do not mention stays open and the document stays in the queue. The payload is checked before the graph resumes, because a resume value that fails inside the node is kept by the checkpointer and replayed on the next try.
+
+The same thing over HTTP:
+
+```bash
+curl -s localhost:8000/review/pending
+curl -s -X POST localhost:8000/review/doc-012/resume -H 'content-type: application/json' \
+  -d '{"reviewer": "dana", "decisions": {"referring_npi": {"correct": "1234567893"}}}'
+```
+
+`GET /review` still lists the queue's documents. `/review/pending` lists the graph threads that are paused, which is a different view of the same documents.
+
+## Two-agent review (extractor + reviewer)
+
+`intake_agent/multiagent.py` puts a second agent in front of the human queue. The extractor is the existing one. The reviewer looks only at fields that fell below the threshold and, for each, calls two tools and then decides: clear it, or escalate it to a human with a reason.
+
+```mermaid
+flowchart LR
+    S([start]) --> E[extractor agent]
+    E --> V[validate<br/>score each field]
+    V --> R[reviewer agent]
+    R -. lookup_source_span .-> T1[(source text)]
+    R -. validate_field .-> T2[(validators)]
+    R --> G{any field still<br/>below threshold?}
+    G -- no --> A[auto_accept]
+    G -- yes --> Q[queue_review]
+    Q --> H[human_review<br/>interrupt]
+    A --> AU[audit]
+    H --> AU
+    AU --> X([end])
+```
+
+- `lookup_source_span(field)` finds where the value is written in the document, if anywhere.
+- `validate_field(field)` runs the existing validators (NPI checksum, date and code formats, enums).
+- A field is cleared only if it passes validation and is found in the source. A bad checksum, a missing value, or a value that is not in the text is escalated, and the reviewer's reason shows up beside the field at the interrupt.
+
+Mock mode is a fixed policy over those tools: deterministic, no key. If `ANTHROPIC_API_KEY` is set, `make_reviewer` returns a `ModelReviewer` that gives the same tools to the model (`submit_verdict` ends its turn; no verdict means escalate). Try it: `intake graph --mock --with-reviewer data/synthetic/doc-012.pdf`. The audit log gets a `reviewer_verdicts` record for each document.
+
+`evals/RESULTS-multiagent.md` compares human-queue load and silent errors with and without the reviewer on the extract tasks of the 32-task set (`python evals/multiagent_eval.py`). On the mock extractor's real output the reviewer cuts the queue from 76 fields to 35 with no new silent errors. With deterministic faults injected it cuts 90 to 53, and 5 swapped names that are valid and present in the source get through. The reviewer checks what its two tools can check and nothing more.
+
+## Tracing with LangSmith
+
+Tracing is off unless both variables are set, and with neither set the code runs exactly as before. CI sets neither.
+
+```bash
+export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY=...        # or put both in .env (gitignored)
+intake graph --mock --with-reviewer data/synthetic/doc-012.pdf
+```
+
+LangGraph runs show up in LangSmith as an `intake-document` trace with one span per node, tagged `intake-agent` and carrying the doc id. If `LANGSMITH_TRACING` is true but there is no key, `tracing.configure()` turns it off so nothing tries to upload.
+
+`evals/langsmith_dataset.py` builds a LangSmith dataset (`intake-agent-eval-32`, one example per task) and runs an evaluation with three evaluators: field accuracy, silent errors, and RAG pass. It does nothing without `LANGSMITH_API_KEY`.
+
+```bash
+python evals/langsmith_dataset.py --mock --reviewer
+```
+
 ## Sample run
 
 Mock mode, fresh state, reviewer name set with `INTAKE_REVIEWER=ops`. Output trimmed.
@@ -535,7 +612,8 @@ tests/               pytest: validators, queue + release gate, audit chain, kill
                      eval, RAG (incl. pgvector parity), eval harness
 data/synthetic/      40 PDFs + ground-truth JSON
 data/policies/       5 synthetic payer prior-auth policies
-evals/               fixed eval set and RESULTS.md from the harness
+evals/               fixed eval set, RESULTS.md from the harness, RESULTS-multiagent.md,
+                     multiagent_eval.py, langsmith_dataset.py
 results/             extraction eval reports
 Dockerfile, docker-compose.yml, .github/workflows/ci.yml
 ```

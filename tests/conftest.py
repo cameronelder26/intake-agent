@@ -38,3 +38,10 @@ def state(settings: Settings):
 def _hashing_embedder(monkeypatch: pytest.MonkeyPatch) -> None:
     """Tests never download a model; the real embedder has its own opt-in test."""
     monkeypatch.setenv("INTAKE_EMBEDDER", "hashing")
+
+
+@pytest.fixture(autouse=True)
+def _offline_tracing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tests never talk to LangSmith, whatever the developer's shell has set."""
+    for v in ("LANGSMITH_TRACING", "LANGCHAIN_TRACING_V2", "LANGSMITH_API_KEY"):
+        monkeypatch.delenv(v, raising=False)

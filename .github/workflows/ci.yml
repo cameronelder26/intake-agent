@@ -48,6 +48,10 @@ jobs:
         run: |
           python -m intake_agent.harness --mock --out "$RUNNER_TEMP/RESULTS.md" > /dev/null
           cat "$RUNNER_TEMP/RESULTS.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Eval, reviewer agent on and off (mock)
+        run: |
+          python evals/multiagent_eval.py --out "$RUNNER_TEMP/RESULTS-multiagent.md" > /dev/null
+          cat "$RUNNER_TEMP/RESULTS-multiagent.md" >> "$GITHUB_STEP_SUMMARY"
 
   docker:
     runs-on: ubuntu-latest
