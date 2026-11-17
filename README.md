@@ -95,6 +95,8 @@ flowchart LR
 | `audit.py` | Append-only JSONL with a hash chain |
 | `killswitch.py` | Env var or file flag, checked before every document |
 | `pipeline.py` | The batch loop |
+| `graph.py` | LangGraph `StateGraph` for one document: extract, validate, confidence gate, auto_accept or human_review, audit |
+| `api.py` | FastAPI service: `/extract`, `/ask`, `/review`, `/healthz` |
 | `eval.py` | Runs the pipeline on the labeled set and writes `results/eval-<date>.md` |
 | `rag/corpus.py` | Loads intake text and policies, chunks on line boundaries, keeps character offsets |
 | `rag/embed.py` | `Embedder` protocol and the deterministic `HashingEmbedder` |
@@ -111,7 +113,7 @@ Needs Python 3.11 or newer.
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-pytest -q                               # 65 pass + 1 pgvector test skipped without a DB
+pytest -q                               # 77 pass + 1 pgvector test skipped without a DB
 python -m intake_agent.eval --mock      # full pipeline + eval, no API key needed
 python -m intake_agent.harness --mock   # success / latency / cost table -> evals/RESULTS.md
 ```
@@ -187,6 +189,59 @@ Regenerate the data set (deterministic for a given seed):
 
 ```bash
 python -m intake_agent.synth --out data/synthetic --n 40 --seed 7
+```
+
+## API (FastAPI)
+
+`intake_agent/api.py` serves the pipeline over HTTP. It runs in mock mode (rule-based extractor, extractive answerer) unless `ANTHROPIC_API_KEY` is set; `INTAKE_MOCK=1` forces mock mode. No key is needed to try it.
+
+```bash
+uvicorn intake_agent.api:app --port 8000
+# or: docker compose up -d api     (listens on 127.0.0.1:8000)
+
+curl -s localhost:8000/healthz
+
+# extract from a PDF (Content-Type application/pdf) or plain text (text/plain)
+curl -s -X POST "localhost:8000/extract?doc_id=demo-1" \
+  -H "content-type: application/pdf" --data-binary @data/synthetic/doc-001.pdf
+
+# cited answer over the documents and payer policies
+curl -s -X POST localhost:8000/ask -H "content-type: application/json" \
+  -d '{"question": "Does Contoso Care require prior authorization for CPT 95806?", "policy_only": true}'
+
+curl -s localhost:8000/review      # documents waiting for a human
+```
+
+| Route | What it does |
+|---|---|
+| `POST /extract` | Runs the graph below. Returns each field with its value, confidence, validator issues and a citation (character span in the source text, or null if the value is not written there verbatim), plus the route taken. 409 if the `doc_id` was already processed. |
+| `POST /ask` | RAG answer with citations that were checked against the retrieved text. |
+| `GET /review` | The review queue: pending documents, open field count, lowest confidence. |
+| `GET /healthz` | Liveness, mode, kill switch state. |
+
+When the kill switch is engaged, `/extract` and `/ask` return 503. `/review` and `/healthz` keep working so the queue can drain.
+
+## Orchestration (LangGraph)
+
+`intake_agent/graph.py` is a LangGraph `StateGraph` for one document. The nodes call the existing modules: the extractor, the validators and confidence scoring, the review queue and the audit log. The gate sends a document to `auto_accept` only if every field is at or above the threshold; otherwise it goes to `human_review`.
+
+```mermaid
+flowchart LR
+    S([start]) --> E[extract]
+    E --> V[validate<br/>score each field]
+    V --> G{every field >=<br/>threshold?}
+    G -- yes --> A[auto_accept]
+    G -- no --> H[human_review<br/>review queue]
+    A --> AU[audit<br/>record the route]
+    H --> AU
+    AU --> X([end])
+```
+
+The extract node checks the kill switch and halts the run if it is engaged. The same graph backs `/extract` and the CLI:
+
+```bash
+intake graph --mock data/synthetic/doc-001.pdf
+# doc-001: route=auto_accept status=auto_approved
 ```
 
 ## Sample run
