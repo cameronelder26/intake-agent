@@ -3,6 +3,8 @@
     POST /extract   run the LangGraph pipeline on an uploaded PDF or text body
     POST /ask       cited answer over the indexed documents and payer policies
     GET  /review    documents waiting for a human
+    GET  /review/pending            graph threads paused at the human interrupt
+    POST /review/{thread_id}/resume resume one with the reviewer's decisions
     GET  /healthz   liveness and kill switch state
 
 Mock mode (rule-based extractor, extractive answerer) is on when INTAKE_MOCK is set
@@ -27,9 +29,16 @@ from pydantic import BaseModel, Field
 from . import killswitch
 from .config import Settings
 from .extractor import ExtractionError, make_extractor
-from .graph import KillSwitchEngaged, run_document
+from .graph import (
+    KillSwitchEngaged,
+    open_review_graph,
+    pending_threads,
+    resume_document,
+    run_document,
+)
 from .pipeline import open_state
 from .rag import RagIndex, load_corpus, make_answerer, make_embedder, make_store, store_table
+from .review_queue import QueueError
 from .schema import FIELDS
 
 _TRUTHY = {"1", "true", "yes", "on"}
@@ -41,6 +50,15 @@ class AskRequest(BaseModel):
     doc_id: str | None = None
     policy_only: bool = False
     k: int = Field(default=5, ge=1, le=20)
+
+
+class ResumeRequest(BaseModel):
+    """Reviewer decisions. Per field: "approve" or {"correct": value}. Or approve_all, or reject."""
+
+    reviewer: str = Field(min_length=1)
+    decisions: dict[str, str | dict] | None = None
+    approve_all: bool | None = None
+    reject: str | None = None
 
 
 def _text_to_pdf(text: str) -> bytes:
@@ -187,6 +205,25 @@ def create_app(
         _, queue = open_state(settings)
         rows = queue.pending()
         return {"count": len(rows), "items": rows}
+
+    @app.get("/review/pending")
+    def review_pending(settings: Cfg) -> dict:
+        """Graph threads paused at the human_review interrupt, with the fields to decide."""
+        items = pending_threads(open_review_graph(settings))
+        return {"count": len(items), "items": items}
+
+    @app.post("/review/{thread_id}/resume")
+    def review_resume(thread_id: str, body: ResumeRequest, settings: Cfg) -> dict:
+        """Resume a paused thread with the reviewer's decisions."""
+        decision = body.model_dump(exclude_none=True)
+        graph = open_review_graph(settings)
+        try:
+            state = resume_document(graph, thread_id, decision)
+        except KeyError as exc:
+            raise HTTPException(404, detail=str(exc.args[0])) from exc
+        except (QueueError, ValueError) as exc:
+            raise HTTPException(422, detail=str(exc)) from exc
+        return {"thread_id": thread_id, "status": state["status"], "route": state["route"]}
 
     return app
 

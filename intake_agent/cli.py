@@ -82,9 +82,13 @@ def graph_cmd(
     pdf: Path,
     mock: Annotated[bool, typer.Option(help="Use the rule-based mock, no API calls.")] = False,
     doc_id: Annotated[str | None, typer.Option(help="Defaults to the file name.")] = None,
+    with_reviewer: Annotated[
+        bool, typer.Option(help="Add the reviewer agent before the human queue.")
+    ] = False,
 ) -> None:
     """Run one document through the LangGraph pipeline and print the route it took."""
     from .graph import KillSwitchEngaged, run_document
+    from .multiagent import make_reviewer
 
     settings = Settings()
     if not mock and not os.environ.get("ANTHROPIC_API_KEY"):
@@ -93,13 +97,69 @@ def graph_cmd(
     if queue.has(doc_id or pdf.stem):
         _fail(f"{doc_id or pdf.stem} is already in the queue")
     try:
-        state = run_document(pdf, make_extractor(mock, settings), queue, settings, doc_id)
+        reviewer = make_reviewer(mock, settings) if with_reviewer else None
+        state = run_document(
+            pdf, make_extractor(mock, settings), queue, settings, doc_id, reviewer=reviewer
+        )
     except KillSwitchEngaged as exc:
         _fail(f"HALTED by kill switch ({exc})")
     typer.echo(f"{state['doc_id']}: route={state['route']} status={state['status']}")
     for name in state["flagged"]:
         f = state["scored"][name]
         typer.echo(f"  review {name:<19} {f.confidence:.2f}  {json.dumps(f.value)}")
+    for v in state.get("verdicts", []):
+        typer.echo(f"  reviewer {v['field']:<17} {v['decision']}: {v['reason']}")
+    if state.get("__interrupt__"):
+        typer.echo(
+            f"paused for a human. Resume: intake graph-review {state['doc_id']} --reviewer you"
+        )
+
+
+@app.command("graph-review")
+def graph_review(
+    thread_id: Annotated[str | None, typer.Argument(help="Omit to list pending threads.")] = None,
+    reviewer: Annotated[str, typer.Option(help="Your name, recorded in the audit log.")] = "",
+    approve: Annotated[list[str] | None, typer.Option(help="Field to approve. Repeatable.")] = None,
+    correct: Annotated[
+        list[str] | None, typer.Option(help="field=value to correct. Repeatable.")
+    ] = None,
+    approve_all: Annotated[bool, typer.Option(help="Approve every open field.")] = False,
+    reject: Annotated[str | None, typer.Option(help="Reject the document, with a reason.")] = None,
+) -> None:
+    """List graph threads paused for human review, or resume one with decisions."""
+    from .graph import open_review_graph, pending_threads, resume_document
+
+    graph = open_review_graph(Settings())
+    if thread_id is None:
+        rows = pending_threads(graph)
+        if not rows:
+            typer.echo("no pending threads")
+        for r in rows:
+            typer.echo(f"{r['thread_id']}: {len(r['fields'])} field(s) to decide")
+            for f in r["fields"]:
+                note = f"  reviewer: {f['reviewer_note']}" if f["reviewer_note"] else ""
+                typer.echo(
+                    f"  {f['field']:<19} {f['confidence']:.2f}  {json.dumps(f['value'])}{note}"
+                )
+        return
+    if not reviewer:
+        _fail("--reviewer is required to resume")
+    decisions: dict = {f: "approve" for f in approve or []}
+    for item in correct or []:
+        field, sep, value = item.partition("=")
+        if not sep:
+            _fail(f"--correct wants field=value, got {item!r}")
+        decisions[field] = {"correct": value}
+    payload: dict = {"reviewer": reviewer, "decisions": decisions}
+    if approve_all:
+        payload["approve_all"] = True
+    if reject:
+        payload["reject"] = reject
+    try:
+        state = resume_document(graph, thread_id, payload)
+    except (KeyError, QueueError, ValueError) as exc:
+        _fail(str(exc.args[0]) if isinstance(exc, KeyError) else str(exc))
+    typer.echo(f"{thread_id}: status={state['status']}")
 
 
 @queue_app.command("list")
