@@ -32,3 +32,10 @@ def settings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Settings:
 @pytest.fixture
 def state(settings: Settings):
     return open_state(settings)
+
+
+@pytest.fixture(autouse=True)
+def _offline_tracing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tests never talk to LangSmith, whatever the developer's shell has set."""
+    for v in ("LANGSMITH_TRACING", "LANGCHAIN_TRACING_V2", "LANGSMITH_API_KEY"):
+        monkeypatch.delenv(v, raising=False)
